@@ -1,0 +1,41 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class DatabaseInsertExample {
+
+    // Database configurations (Adjust URL, user, and password according to your setup)
+    private static final String URL = "jdbc:mysql://localhost:3306/testdb";
+    private static final String USER = "root";
+    private static final String PASSWORD = "your_password";
+
+    public static void main(String[] args) {
+        // The SQL query with placeholders (?) to prevent SQL Injection
+        String insertSQL = "INSERT INTO students (id, name, age) VALUES (?, ?, ?)";
+
+        // Try-with-resources automatically closes Connection and PreparedStatement
+        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
+
+            System.out.println("Connected to the database successfully!");
+
+            // Bind values to the query placeholders (1-based index)
+            preparedStatement.setInt(1, 101);
+            preparedStatement.setString(2, "Alice Smith");
+            preparedStatement.setInt(3, 22);
+
+            // Execute the insertion query
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            // Verify if the insertion was successful
+            if (rowsAffected > 0) {
+                System.out.println("A new student row was inserted successfully!");
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Database connection or execution failed!");
+            e.printStackTrace();
+        }
+    }
+}
